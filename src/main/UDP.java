@@ -16,6 +16,7 @@ public class UDP extends Thread {
 
 	private DatagramSocket socket;
 	private OnMessageListener observer;
+	private String ipVariable;
 	
 	public void setObserver(OnMessageListener observer) {
 		this.observer = observer;
@@ -35,6 +36,15 @@ public class UDP extends Thread {
 				DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 				System.out.println("Esperando datagrama");
 				socket.receive(packet);
+				
+				//Llamar el ip de mi celular
+				//System.out.println(packet.getSocketAddress());
+				String repartirPacket = packet.getSocketAddress().toString();
+				String[] repartirPacket2 = repartirPacket.split(":");
+				String separarSegundaVezElSlash = repartirPacket2[0];
+				String[] separado = separarSegundaVezElSlash.split("/");
+				ipVariable = separado[1];
+				System.out.println(ipVariable);
 				
 				//Aquí recibo los mensajes de Android
 				String mensaje = new String(packet.getData()).trim();		
@@ -62,7 +72,8 @@ public class UDP extends Thread {
 		new Thread(
 			() -> {
 				try {
-					InetAddress ip = InetAddress.getByName("192.168.1.18");
+					
+					InetAddress ip = InetAddress.getByName(ipVariable);
 					DatagramPacket packet = new DatagramPacket(mensaje.getBytes(),mensaje.getBytes().length,ip, 6000);
 					socket.send(packet);
 					

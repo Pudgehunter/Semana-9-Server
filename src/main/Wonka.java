@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.google.gson.Gson;
+
 import events.OnMessageListener;
 import model.Images;
 import processing.core.PApplet;
@@ -52,33 +54,44 @@ public class Wonka extends PApplet implements OnMessageListener{
 			
 			if(imagen.getTipoImagen().equals("Chocolates")) {
 				image(imageUno,imagen.getX(),(i*imagen.getY()),50,50);
-				text("Chocolates",imagen.getX()+75,(i*imagen.getY()+25));
-				//text(imagen.getTiempo(),imagen.getX()+75,(i*imagen.getY())+100);
+				text("Numero de pedido: " + i,imagen.getX()+75,(i*imagen.getY()+10));
+				text("Chocolates",imagen.getX()+75,(i*imagen.getY()+30));
+				text(imagen.getTiempo(),imagen.getX()+75,(i*imagen.getY())+50);
 			}
 			if(imagen.getTipoImagen().equals("Salpicon")) {
 				image(imageDos,imagen.getX(),(i*imagen.getY()),50,50);
-				text("Salpicon",imagen.getX()+75,(i*imagen.getY()+25));
-				//text(imagen.getTiempo(),imagen.getX()+75,(i*imagen.getY())+100);
+				text("Numero de pedido: " + i,imagen.getX()+75,(i*imagen.getY()+10));
+				text("Salpicon",imagen.getX()+75,(i*imagen.getY()+30));
+				text(imagen.getTiempo(),imagen.getX()+75,(i*imagen.getY())+50);
 			}
 			if(imagen.getTipoImagen().equals("Helado")) {
 				image(imageTres,imagen.getX(),(i*imagen.getY()),50,50);
-				text("Helado",imagen.getX()+75,(i*imagen.getY()+25));
-				//text(imagen.getTiempo(),imagen.getX()+75,(i*imagen.getY())+100);
+				text("Numero de pedido: " + i,imagen.getX()+75,(i*imagen.getY()+10));
+				text("Helado",imagen.getX()+75,(i*imagen.getY()+30));
+				text(imagen.getTiempo(),imagen.getX()+75,(i*imagen.getY())+50);
 			}
 			if(imagen.getTipoImagen().equals("AlmuerzoWonka")) {
 				image(imageCuatro,imagen.getX(),i*imagen.getY(),50,50);
-				text("AlmuerzoWonka",imagen.getX()+75,(i*imagen.getY()+25));
-				//text(imagen.getTiempo(),imagen.getX()+75,(i*imagen.getY())+100);
+				text("Numero de pedido: " + i,imagen.getX()+75,(i*imagen.getY()+10));
+				text("AlmuerzoWonka",imagen.getX()+75,(i*imagen.getY()+30));
+				text(imagen.getTiempo(),imagen.getX()+75,(i*imagen.getY())+50);
 			}
-			
 		}
+		
 	}
 
-	public void mouseClicked() {
+	public void mousePressed() {
+		
+
 		for (int i = 0; i < images.size(); i++) {
 			
-			if(mouseX > images.get(i).getX() && mouseX < images.get(i).getX() + 50 && mouseY > images.get(i).getY() && mouseY < images.get(i).getY()+ 50 ) {
-				images.remove(1);
+			if(		mouseX > images.get(i).getX() &&
+					mouseX < images.get(i).getX() + 50 &&
+					mouseY > images.get(i).getY() * i &&
+					mouseY < images.get(i).getY() * i + 50) {
+
+                udp.sendMessage("terminado");
+                images.remove(i);
 			}
 		}
 		
@@ -86,6 +99,9 @@ public class Wonka extends PApplet implements OnMessageListener{
 
 	@Override
 	public void onImagesReceive(Images image) {
-		 images.add(image);
+		int numeroPedidosMaximo = 9;
+		if(images.size() < numeroPedidosMaximo) {
+		images.add(image);
+		}
 	}
 }
